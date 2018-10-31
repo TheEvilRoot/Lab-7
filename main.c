@@ -19,15 +19,13 @@ int main() {
   printf("\n\nLength: %ld\nString: \n'%s'\n", length, string);
 
   for (long i = 0; i < length - 1; i++) {
-    if (isPunctuationChar(string[i])) {
-      if (string[i + 1] != ' ') {
-        if(!extendString(string, &length, 1)) {
-          printf("Please, go to hell.\n");
-          break;
-        }
-        shiftString(string, length, i + 1);
-        string[i + 1] = ' ';
+    if (isPunctuationChar(string[i]) && string[i + 1] != ' ') {
+      if(!extendString(string, &length, 1)) {
+        printf("Please, go to hell.\n");
+        break;
       }
+      shiftString(string, length, i + 1);
+      string[i + 1] = ' ';
     }
     if (isEndPunctuationChar(string[i]) &&
         i + 2 < length &&
