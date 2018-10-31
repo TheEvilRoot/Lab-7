@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifdef _WIN32
+#define CLEAR_CMD "cls"
+#else
+#define CLEAR_CMD "clear"
+#endif
+
 // Request string from user
 // PS: With non-fixed size ;)
 bool requestString(char**, long*);
@@ -22,12 +28,12 @@ int main() {
   char *string = NULL;
 
   // Just clear the screen
-  system("clear");
+  system(CLEAR_CMD);
 
   requestString(&string, &length);
   
   // Just clear screen again!
-  system("clear");
+  system(CLEAR_CMD);
   printf("\n\nLength: %ld\nString: \n'%s'\n", length, string);
 
   for (long i = 0; i < length - 1; i++) {
