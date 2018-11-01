@@ -12,6 +12,8 @@
 // PS: With non-fixed size ;)
 bool requestString(char**, long*);
 
+void clearBuffer(void);
+
 bool isPunctuationChar(char);
 bool isEndPunctuationChar(char);
 
