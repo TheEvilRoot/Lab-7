@@ -9,7 +9,6 @@
 #endif
 
 // Request string from user
-// PS: With non-fixed size ;)
 bool requestString(char**, long*);
 
 bool isPunctuationChar(char);
@@ -23,90 +22,98 @@ void shiftString(char*, long, int);
 
 int main() {
 
-  // Initializating necessary variables
-  long length = 0;
-  char *string = NULL;
+	// Initializating necessary variables
+	long length = 0;
+	char *string = NULL;
 
-  // Just clear the screen
-  system(CLEAR_CMD);
+	// Just clear the screen
+	system(CLEAR_CMD);
 
-  requestString(&string, &length);
-  
-  // Just clear screen again!
-  system(CLEAR_CMD);
-  printf("\n\nLength: %ld\nString: \n'%s'\n", length, string);
+	if (!requestString(&string, &length)) {
+		printf("I'am sorry. An unknown (known) error occurred while string input. You can try to restart the program ;(\n");
+		return 1;
+	}
 
-  for (long i = 0; i < length - 1; i++) {
-    
-    // Check is current char in [ , . : ; ! ? ]
-    // If yes AND next char is not a space extend string and shift starting from i + 1 position.
-    // then set next char to space.
-    if (isPunctuationChar(string[i]) && string[i + 1] != ' ') {
-      if(!extendString(string, &length, 1)) {
-        printf("Please, go to hell.\n");
-        break;
-      }
-      shiftString(string, length, i + 1);
-      string[i + 1] = ' ';
-    }
+	// Just clear screen again!
+	system(CLEAR_CMD);
+	printf("Length: %ld\nString: \n'%s'\n", length, string);
 
-    // Check is current char in [ ? ! . ]
-    // If yes AND next char (if exists) is space (should be replaced before if necessary)
-    // AND next-next char is lowercase then set it upper.
-    if (isEndPunctuationChar(string[i]) &&
-        i + 2 < length &&
-        string[i + 1] == ' ' &&
-        string[i + 2] >= 'a' &&
-        string[i + 2] <= 'z') {
-      string[i + 2] = string[i + 2] + ('A' - 'a');
-    }
-  }
+	for (long i = 0; i < length - 1; i++) {
 
-  // Output new string and await for user actions.
-  printf("\nNew length: %ld\nNew string:\n'%s'\n", length, string);
-  getchar();
-  return 0;
+		// Check is current char in [ , . : ; ! ? ]
+		// If yes AND next char is not a space extend string and shift starting from i + 1 position.
+		// then set next char to space.
+		if (isPunctuationChar(string[i]) && i + 2 < length  && string[i + 1] != ' ') {
+			if (!extendString(string, &length, 1)) {
+				printf("Sorry, allocating error\n"); //  (╯°□°）╯︵ ┻━┻
+				break;
+			}
+			shiftString(string, length, i + 1);
+			string[i + 1] = ' ';
+		}
+
+		// Check is current char in [ ? ! . ]
+		// If yes AND next char (if exists) is space (should be replaced before if necessary)
+		// AND next-next char is lowercase then set it upper.
+		if (isEndPunctuationChar(string[i]) &&
+			i + 2 < length &&
+			string[i + 1] == ' ' &&
+			string[i + 2] >= 'a' &&
+			string[i + 2] <= 'z') {
+			string[i + 2] = string[i + 2] + ('A' - 'a');
+		}
+	}
+
+	// Output new string and await for user actions.
+	printf("\nNew length: %ld\nNew string:\n'%s'\n", length, string);
+	getchar();
+	return 0;
 }
 
 void shiftString(char *stringPtr, long length, int fromPos) {
-  for (long i = length - 2; i >= fromPos; i--) {
-      stringPtr[i + 1] = stringPtr[i];
-  }
+	for (long i = length - 2; i >= fromPos; i--) {
+		stringPtr[i + 1] = stringPtr[i];
+	}
 }
 
 // We need MORE pointers
 bool extendString(char *stringPtr, long *lengthPtr, int step) {
-  (*lengthPtr) = (*lengthPtr) + step;
-  return (stringPtr = (char*) realloc(stringPtr, (*lengthPtr + step) * sizeof(char))) != NULL;
+	(*lengthPtr) = (*lengthPtr) + step;
+	return (stringPtr = (char*)realloc(stringPtr, (*lengthPtr + step) * sizeof(char))) != NULL;
 }
 
 bool isEndPunctuationChar(char c) {
-  return c == '.' || c == '!' || c == '?';
+	return c == '.' || c == '!' || c == '?';
 }
 
 bool isPunctuationChar(char c) {
-  return c == ',' || c == ':' || c == ';' || isEndPunctuationChar(c);
+	return c == ',' || c == ':' || c == ';' || isEndPunctuationChar(c);
 }
 
-// Some sort of dark magic... no, gray magic, I guess... #f4f4f4 magic, to be exact
+// Some sort of dark magic... no, gray magic, I guess... #c4c4c4 magic, to be exact
 bool requestString(char **stringPtr, long *lengthPtr) {
-  int lengthStep = 64;
-  (*stringPtr) = realloc(*stringPtr, lengthStep * sizeof(char));
-  int length = lengthStep;
-  printf("Enter string: \n> ");
-  if ((*stringPtr) == NULL) {
-    return false;
-  }
-  int key = EOF;
-  int i = 0;
-  while ((key = getchar()) != '\n' && key != EOF) {
-    (*stringPtr)[i++] = key;
-    if (i == length) {
-      length = i + lengthStep;
-      (*stringPtr) = (char*) realloc(*stringPtr, length);
-    }
-  }
-  (*stringPtr)[i] = '\0';
-  *lengthPtr = i + 1;
-  return true;
+	// Start string length
+	int lengthStep = 32;
+	if(((*stringPtr) = realloc(*stringPtr, lengthStep * sizeof(char))) == NULL) {
+		return false;
+	}
+	int length = lengthStep;
+	printf("Enter string: \n> ");
+	if ((*stringPtr) == NULL) {
+		return false;
+	}
+	int key = EOF;
+	int i = 0;
+	while ((key = getchar()) != '\n' && key != EOF) {
+		(*stringPtr)[i++] = key;
+		if (i == length) {
+			length = i + lengthStep;
+			if (((*stringPtr) = (char*)realloc(*stringPtr, length)) == NULL) {
+				return false;
+			}
+		}
+	}
+	(*stringPtr)[i] = '\0';
+	*lengthPtr = i + 1;
+	return true;
 }
