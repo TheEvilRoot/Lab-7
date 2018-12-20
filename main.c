@@ -2,12 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#ifdef _WIN32
-#define CLEAR_CMD "cls"
-#else
-#define CLEAR_CMD "clear"
-#endif
-
 // Request string from user
 bool requestString(char**, long*);
 
@@ -27,7 +21,7 @@ int main() {
 	char *string = NULL;
 
 	// Just clear the screen
-	system(CLEAR_CMD);
+	system("cls");
 
 	if (!requestString(&string, &length)) {
 		printf("I'am sorry. An unknown (known) error occurred while string input. You can try to restart the program ;(\n");
@@ -35,7 +29,7 @@ int main() {
 	}
 
 	// Just clear screen again!
-	system(CLEAR_CMD);
+	system("cls");
 	printf("Length: %ld\nString: \n'%s'\n", length, string);
 
 	for (long i = 0; i < length - 1; i++) {
